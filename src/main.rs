@@ -1,7 +1,8 @@
 extern crate freetype;
 
-pub mod workspace;
+pub mod buffer;
 pub mod pane;
+pub mod workspace;
 
 fn main() {
     println!("Hello, world!");
