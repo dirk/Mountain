@@ -1,6 +1,10 @@
+use std::path;
+
 use pane::Pane;
 
-struct Project;
+struct Project {
+    directory: path::PathBuf,
+}
 
 struct Window;
 
