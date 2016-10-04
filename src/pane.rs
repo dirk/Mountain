@@ -1,7 +1,7 @@
 use buffer::Buffer;
 
 pub struct Pane {
-    itesm: Vec<Item>,
+    items: Vec<Item>,
 }
 
 pub struct Item {
