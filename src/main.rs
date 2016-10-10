@@ -4,6 +4,7 @@ extern crate freetype;
 
 pub mod buffer;
 pub mod pane;
+pub mod platform;
 pub mod workspace;
 
 fn main() {
