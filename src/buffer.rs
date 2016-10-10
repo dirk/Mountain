@@ -18,29 +18,29 @@ impl File {
     }
 
     /// Read the whole file into lines.
-    fn read_lines(&self) -> Vec<Line> {
+    pub fn read_lines(&self) -> Vec<Line> {
         let ref file = self.file;
-        let reader = BufReader::new(file);
+        let mut reader = BufReader::new(file);
+        let mut lines: Vec<Line> = vec![];
 
-        reader.lines()
-            .filter(|line| {
-                match line {
-                    &Ok(_) => true,
-                    &Err(ref err) => {
-                        println!("error reading line: {:?}", err);
-                        false
-                    }
-                }
-            })
-            .map(|line| {
-                let chars = line.unwrap().chars().collect();
-                Line { chars: chars }
-            })
-            .collect()
+        loop {
+            let mut buf = String::new();
+
+            match reader.read_line(&mut buf) {
+                Ok(0) => break, // No more input
+                Ok(_) => {
+                    let chars = buf.chars().collect();
+                    lines.push(Line { chars: chars })
+                },
+                Err(e) => panic!(e),
+            }
+        }
+
+        lines
     }
 }
 
-
+#[derive(Debug)]
 pub struct Line {
     chars: Vec<char>,
 }
