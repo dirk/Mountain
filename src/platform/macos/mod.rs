@@ -4,6 +4,8 @@ use self::cocoa::base::{id, nil, selector};
 use self::cocoa::foundation::{NSAutoreleasePool, NSString};
 use self::cocoa::appkit::{self, NSApp, NSApplication, NSMenu, NSMenuItem};
 
+use super::common;
+
 pub struct Application {
     pool: id, // NSAutoreleasePool
     app: id, // NSApp
@@ -56,4 +58,24 @@ impl Application {
     pub fn run(&self) {
         unsafe { self.app.run() }
     }
+}
+
+pub struct Menu {
+    title: String,
+    items: Vec<MenuItem>,
+}
+
+impl common::Menu for Menu {
+    type MenuItem = MenuItem;
+
+    fn new(title: String, items: Option<Vec<MenuItem>>) -> Menu {
+        Menu {
+            title: title,
+            items: items.unwrap_or(vec![]),
+        }
+    }
+}
+
+pub struct MenuItem {
+    title: String,
 }
