@@ -1,7 +1,7 @@
 extern crate cocoa;
 
 use self::cocoa::base::{id, nil, selector};
-use self::cocoa::foundation::{NSAutoreleasePool, NSProcessInfo, NSString};
+use self::cocoa::foundation::{NSAutoreleasePool, NSString};
 use self::cocoa::appkit::{self, NSApp, NSApplication, NSMenu, NSMenuItem};
 
 pub struct Application {
@@ -38,10 +38,7 @@ impl Application {
         self.app.setMainMenu_(menubar);
 
         let app_menu = NSMenu::new(nil).autorelease();
-        let quit_prefix = NSString::alloc(nil).init_str("Quit ");
-        let quit_title = quit_prefix.stringByAppendingString_(
-            NSProcessInfo::processInfo(nil).processName()
-        );
+        let quit_title = NSString::alloc(nil).init_str("Quit");
         let quit_action = selector("terminate:");
         let quit_key = NSString::alloc(nil).init_str("q");
         let quit_item = NSMenuItem::alloc(nil).initWithTitle_action_keyEquivalent_(
