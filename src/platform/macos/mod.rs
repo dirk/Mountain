@@ -2,7 +2,7 @@ extern crate cocoa;
 
 use self::cocoa::base::{id, nil, selector, NO};
 use self::cocoa::foundation::{NSAutoreleasePool, NSPoint, NSRect, NSSize, NSString, NSUInteger};
-use self::cocoa::appkit::{self, NSApp, NSApplication, NSMenu, NSMenuItem, NSRunningApplication};
+use self::cocoa::appkit::{self, NSApp, NSApplication, NSMenu, NSMenuItem, NSRunningApplication, NSWindow};
 
 use super::common;
 
@@ -93,7 +93,7 @@ pub struct Window {
 }
 
 impl Window {
-    pub fn new<T: AsRef<str>>(title: T) -> Window {
+    pub fn new() -> Window {
         use self::cocoa::appkit::*;
 
         // Window setup stuff cribbed from:
@@ -115,15 +115,19 @@ impl Window {
         };
 
         unsafe {
-            let title = NSString::alloc(nil).init_str(title.as_ref());
-            window.setTitle_(title);
-
             window.cascadeTopLeftFromPoint_(NSPoint::new(20., 20.));
             window.makeKeyAndOrderFront_(nil);
         };
 
         Window {
             window: window,
+        }
+    }
+
+    pub fn set_title<T: AsRef<str>>(&self, title: T) {
+        unsafe {
+            let title = NSString::alloc(nil).init_str(title.as_ref());
+            self.window.setTitle_(title);
         }
     }
 }
