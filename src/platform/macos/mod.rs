@@ -1,14 +1,14 @@
 extern crate cocoa;
 
-use self::cocoa::base::{id, nil, selector};
-use self::cocoa::foundation::{NSAutoreleasePool, NSString};
-use self::cocoa::appkit::{self, NSApp, NSApplication, NSMenu, NSMenuItem};
+use self::cocoa::base::{id, nil, selector, NO};
+use self::cocoa::foundation::{NSAutoreleasePool, NSPoint, NSRect, NSSize, NSString, NSUInteger};
+use self::cocoa::appkit::{self, NSApp, NSApplication, NSMenu, NSMenuItem, NSRunningApplication};
 
 use super::common;
 
 pub struct Application {
     pool: id, // NSAutoreleasePool
-    app: id, // NSApp
+    app: id, // NSApplication
 }
 
 impl Application {
@@ -54,9 +54,17 @@ impl Application {
         app_menu.addItem_(quit_item);
     }
 
-    // Start the event loop
+    /// Bring the application to the front (as we've just been launched) and
+    /// start the event loop
     pub fn run(&self) {
-        unsafe { self.app.run() }
+        use self::cocoa::appkit::NSApplicationActivateIgnoringOtherApps;
+
+        unsafe {
+            let current_app = NSRunningApplication::currentApplication(nil);
+            current_app.activateWithOptions_(NSApplicationActivateIgnoringOtherApps);
+
+            self.app.run();
+        }
     }
 }
 
@@ -78,4 +86,44 @@ impl common::Menu for Menu {
 
 pub struct MenuItem {
     title: String,
+}
+
+pub struct Window {
+    window: id, // NSWindow
+}
+
+impl Window {
+    pub fn new<T: AsRef<str>>(title: T) -> Window {
+        use self::cocoa::appkit::*;
+
+        // Window setup stuff cribbed from:
+        //   https://github.com/servo/cocoa-rs/blob/5f5eece/examples/hello_world.rs#L42-L55
+
+        let style_mask =
+            (NSTitledWindowMask as NSUInteger) |
+            (NSClosableWindowMask as NSUInteger) |
+            (NSMiniaturizableWindowMask as NSUInteger) |
+            (NSResizableWindowMask as NSUInteger);
+
+        let window = unsafe {
+            NSWindow::alloc(nil).initWithContentRect_styleMask_backing_defer_(
+                NSRect::new(NSPoint::new(0., 0.), NSSize::new(200., 200.)),
+                style_mask,
+                NSBackingStoreBuffered,
+                NO
+            ).autorelease()
+        };
+
+        unsafe {
+            let title = NSString::alloc(nil).init_str(title.as_ref());
+            window.setTitle_(title);
+
+            window.cascadeTopLeftFromPoint_(NSPoint::new(20., 20.));
+            window.makeKeyAndOrderFront_(nil);
+        };
+
+        Window {
+            window: window,
+        }
+    }
 }

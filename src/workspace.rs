@@ -1,12 +1,16 @@
 use std::path::{Path, PathBuf};
 
+use platform;
 use pane::{Item, Pane};
 
 struct Project {
     directory: PathBuf,
 }
 
-struct Window;
+struct Window {
+    /// Native window instance.
+    window: platform::Window,
+}
 
 struct Workspace {
     project: Project,
