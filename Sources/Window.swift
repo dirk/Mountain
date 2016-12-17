@@ -6,8 +6,6 @@ class Window {
     let window: NSWindow
     var viewController: WindowContentViewController? = nil
 
-    let panes = [Pane]()
-
     init(_ withWorkspace: Workspace) {
         workspace = withWorkspace
 
@@ -21,7 +19,7 @@ class Window {
         window.makeKeyAndOrderFront(nil)
     }
 
-    func render() {
+    func render(panes: [Pane]) {
         if viewController == nil {
             viewController = WindowContentViewController(self)
             window.contentView = viewController!.view
