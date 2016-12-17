@@ -5,6 +5,8 @@ use self::cocoa::foundation::{NSAutoreleasePool, NSPoint, NSRect, NSSize, NSStri
 use self::cocoa::appkit::{self, NSApp, NSApplication, NSMenu, NSMenuItem, NSRunningApplication, NSWindow};
 
 use super::common;
+use super::super::pane::Pane;
+use super::super::project::Project;
 
 pub struct Application {
     pool: id, // NSAutoreleasePool
@@ -121,6 +123,12 @@ impl Window {
 
         Window {
             window: window,
+        }
+    }
+
+    pub fn render(&self, project: Project, panes: Vec<Pane>) {
+        if let Some(name) = project.directory.file_name().and_then(|s| s.to_str()) {
+            self.set_title(name)
         }
     }
 

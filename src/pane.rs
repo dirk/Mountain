@@ -1,8 +1,10 @@
 use std::convert::AsRef;
 use std::path::Path;
+use std::sync::Arc;
 
 use buffer::{Buffer, File};
 
+#[derive(Clone)]
 pub struct Pane {
     items: Vec<Item>,
 }
@@ -13,8 +15,11 @@ impl Pane {
     }
 }
 
+#[derive(Clone)]
 pub struct Item {
-    buffer: Buffer,
+    // As an optimization `Buffer`'s are managed separately and are
+    // internally mutable.
+    buffer: Arc<Buffer>,
 }
 
 impl Item {
@@ -22,7 +27,7 @@ impl Item {
         let buffer = Buffer::from_file(File::from_path(path.as_ref()));
 
         Item {
-            buffer: buffer,
+            buffer: Arc::new(buffer),
         }
     }
 }
