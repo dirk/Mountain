@@ -2,6 +2,7 @@ use std::fs;
 use std::io::{BufRead, BufReader};
 use std::path;
 
+#[derive(Debug)]
 pub struct File {
     path: path::PathBuf,
     file: fs::File,
@@ -45,9 +46,16 @@ pub struct Line {
     chars: Vec<char>,
 }
 
+#[derive(Debug)]
+pub enum BufferSource {
+    File(File),
+    Unknown,
+}
+
 /// Internal storage of a file for editing.
+#[derive(Debug)]
 pub struct Buffer {
-    pub file: File,
+    pub source: BufferSource,
     pub lines: Vec<Line>,
 }
 
@@ -55,7 +63,7 @@ impl Buffer {
     pub fn from_file(file: File) -> Buffer {
         Buffer {
             lines: file.read_lines(),
-            file: file,
+            source: BufferSource::File(file),
         }
     }
 }
