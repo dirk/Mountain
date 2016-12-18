@@ -61,9 +61,18 @@ pub struct Buffer {
 
 impl Buffer {
     pub fn from_file(file: File) -> Buffer {
+        let lines = file.read_lines();
+
         Buffer {
-            lines: file.read_lines(),
             source: BufferSource::File(file),
+            lines: lines,
+        }
+    }
+
+    pub fn new_unknown() -> Buffer {
+        Buffer {
+            source: BufferSource::Unknown,
+            lines: vec![],
         }
     }
 }

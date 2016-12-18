@@ -1,3 +1,4 @@
+use std::cell::RefCell;
 use std::path::Path;
 use std::sync::{Arc, Weak};
 
@@ -10,12 +11,12 @@ pub struct Workspace {
     pub application: Weak<platform::Application>,
     pub project: Project,
     /// Window to which the `Workspace` is rendered.
-    pub window: platform::Window,
+    pub window: RefCell<platform::Window>,
     /// A workspace will have one or more panes in a given arrangement;
     /// multiple panes with arrangements isn't currently implemented, but
     /// for the sake of forward-thinking'ness we'll represent the
     /// workspace's panes as an array.
-    pub panes: Vec<Pane>,
+    pub panes: Vec<Box<Pane>>,
 }
 
 impl Workspace {
@@ -25,7 +26,7 @@ impl Workspace {
         Workspace {
             application: Arc::downgrade(&application),
             project: project,
-            window: window,
+            window: RefCell::new(window),
             panes: vec![],
         }
     }
@@ -33,7 +34,9 @@ impl Workspace {
     pub fn render(&self) {
         let panes = self.panes.clone();
         let project = self.project.clone();
-        self.window.render(project, panes)
+
+        let mut window = self.window.borrow_mut();
+        window.render(project, panes)
     }
 
     pub fn active_pane_mut<'a>(&'a mut self) -> &'a mut Pane {

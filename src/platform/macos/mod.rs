@@ -8,6 +8,10 @@ use super::common;
 use super::super::pane::Pane;
 use super::super::project::Project;
 
+mod panes_component;
+
+use self::panes_component::PanesComponent;
+
 pub struct Application {
     pool: id, // NSAutoreleasePool
     app: id, // NSApplication
@@ -92,6 +96,7 @@ pub struct MenuItem {
 
 pub struct Window {
     window: id, // NSWindow
+    panes: PanesComponent,
 }
 
 impl Window {
@@ -116,6 +121,8 @@ impl Window {
             ).autorelease()
         };
 
+        let panes = PanesComponent::new();
+
         unsafe {
             window.cascadeTopLeftFromPoint_(NSPoint::new(20., 20.));
             window.makeKeyAndOrderFront_(nil);
@@ -123,13 +130,16 @@ impl Window {
 
         Window {
             window: window,
+            panes: panes,
         }
     }
 
-    pub fn render(&self, project: Project, panes: Vec<Pane>) {
+    pub fn render(&mut self, project: Project, panes: Vec<Box<Pane>>) {
         if let Some(name) = project.directory.file_name().and_then(|s| s.to_str()) {
             self.set_title(name)
         }
+
+        self.panes.render(panes)
     }
 
     pub fn set_title<T: AsRef<str>>(&self, title: T) {
