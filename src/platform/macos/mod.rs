@@ -8,9 +8,9 @@ use super::common;
 use super::super::pane::Pane;
 use super::super::project::Project;
 
-mod panes_component;
+mod panes;
 
-use self::panes_component::PanesComponent;
+use self::panes::PanesComponent;
 
 pub struct Application {
     pool: id, // NSAutoreleasePool
