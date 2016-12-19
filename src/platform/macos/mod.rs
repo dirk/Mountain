@@ -9,6 +9,7 @@ use super::super::pane::Pane;
 use super::super::project::Project;
 
 mod panes;
+mod util;
 
 use self::panes::PanesComponent;
 
@@ -124,6 +125,7 @@ impl Window {
         let panes = PanesComponent::new();
 
         unsafe {
+            window.setContentView_(panes.view);
             window.cascadeTopLeftFromPoint_(NSPoint::new(20., 20.));
             window.makeKeyAndOrderFront_(nil);
         };

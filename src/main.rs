@@ -1,6 +1,8 @@
 #![allow(dead_code)]
 
 extern crate freetype;
+#[macro_use] extern crate log;
+#[macro_use] extern crate objc;
 
 pub mod buffer;
 pub mod pane;
@@ -30,6 +32,7 @@ fn main() {
 
     let path = Path::new("./src/main.rs");
     workspace.open_path(path);
+    workspace.render();
 
     application.run();
 }
