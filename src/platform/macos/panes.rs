@@ -24,6 +24,10 @@ impl PanesComponent {
         if self.current_panes != panes {
             self.reset_panes(panes)
         }
+
+        for pane in self.current_pane_components.iter() {
+            pane.render()
+        }
     }
 
     // Clear the current pane components and re-add them.
@@ -58,4 +62,6 @@ impl PaneComponent {
             pane: pane,
         }
     }
+
+    pub fn render(&self) {}
 }

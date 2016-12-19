@@ -9,13 +9,12 @@ pub mod project;
 pub mod workspace;
 
 use std::env;
+use std::path::Path;
 use std::sync::Arc;
 
 fn main() {
     // println!("Hello, world!");
 
-    // use std::path::Path;
-    //
     // let file = buffer::File::from_path(Path::new("./Cargo.toml"));
     // let lines = file.read_lines();
     // println!("{:?}", lines);
@@ -26,8 +25,11 @@ fn main() {
         directory: env::current_dir().unwrap(),
     };
 
-    let workspace = workspace::Workspace::new(application.clone(), project);
+    let mut workspace = workspace::Workspace::new(application.clone(), project);
     workspace.render();
+
+    let path = Path::new("./src/main.rs");
+    workspace.open_path(path);
 
     application.run();
 }

@@ -11,6 +11,12 @@ pub struct Pane {
 }
 
 impl Pane {
+    pub fn new() -> Pane {
+        Pane {
+            items: vec![],
+        }
+    }
+
     pub fn add_item(&mut self, item: Item) {
         self.items.push(item)
     }

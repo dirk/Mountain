@@ -39,7 +39,13 @@ impl Workspace {
         window.render(project, panes)
     }
 
+    /// Gets the current active pane. If one does not exist then it will
+    /// create one.
     pub fn active_pane_mut<'a>(&'a mut self) -> &'a mut Pane {
+        if self.panes.len() == 0 {
+            self.panes.push(Box::new(Pane::new()))
+        }
+
         &mut self.panes[0]
     }
 
