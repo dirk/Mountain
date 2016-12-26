@@ -2,6 +2,7 @@ extern crate cocoa;
 extern crate core_graphics;
 
 use self::cocoa::base::id;
+use self::cocoa::foundation::NSRect;
 use self::cocoa::appkit::NSView;
 use self::core_graphics::geometry::{CGPoint, CGRect, CGSize};
 
@@ -19,4 +20,13 @@ pub fn resize_to_superview(view: id) {
             setFrame:frame
         ];
     }
+}
+
+pub fn debug_nsrect(rect: NSRect) -> String {
+    format!("NSRect(Origin(x: {}, y: {}), Size(width: {}, height: {}))",
+        rect.origin.x,
+        rect.origin.y,
+        rect.size.width,
+        rect.size.height,
+    )
 }
