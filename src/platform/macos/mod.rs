@@ -8,6 +8,7 @@ use super::common;
 use super::super::pane::Pane;
 use super::super::project::Project;
 
+mod items;
 mod panes;
 mod util;
 

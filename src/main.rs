@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 
+extern crate env_logger;
 extern crate freetype;
 #[macro_use] extern crate log;
 #[macro_use] extern crate objc;
@@ -15,6 +16,8 @@ use std::path::Path;
 use std::sync::Arc;
 
 fn main() {
+    env_logger::init().unwrap();
+
     // println!("Hello, world!");
 
     // let file = buffer::File::from_path(Path::new("./Cargo.toml"));

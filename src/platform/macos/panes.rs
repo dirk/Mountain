@@ -7,14 +7,17 @@ use self::cocoa::base::{class, id, nil, YES};
 use self::cocoa::appkit::NSView;
 use self::core_graphics::base::CGFloat;
 
-use super::super::super::pane::Pane;
+use std::cell::RefCell;
 
+use super::super::super::pane::{Item, Pane};
+
+use super::items::ItemComponent;
 use super::util;
 
 pub struct PanesComponent {
     pub view: id, // NSView
     current_panes: Vec<Box<Pane>>,
-    current_pane_components: Vec<PaneComponent>,
+    current_pane_components: Vec<RefCell<PaneComponent>>,
 }
 
 impl PanesComponent {
@@ -32,9 +35,10 @@ impl PanesComponent {
             self.reset_panes(panes)
         }
 
-        for (i, pane_component) in self.current_pane_components.iter().enumerate() {
+        for (i, _) in self.current_pane_components.iter().enumerate() {
+            let ref pane_component = self.current_pane_components[i];
             let ref pane = self.current_panes[i];
-            pane_component.render(pane.clone());
+            pane_component.borrow_mut().render(pane.clone());
         }
     }
 
@@ -43,17 +47,19 @@ impl PanesComponent {
     //   intelligently determine the added/removed ones.
     fn reset_panes(&mut self, panes: Vec<Box<Pane>>) {
         for component in &self.current_pane_components {
-            unsafe { component.view.removeFromSuperview() }
+            let view = component.borrow().view;
+            unsafe { view.removeFromSuperview() }
         }
 
         self.current_panes = panes.clone();
 
         self.current_pane_components = panes.iter().map(|pane| {
-            PaneComponent::new(pane.clone())
+            RefCell::new(PaneComponent::new(pane.clone()))
         }).collect();
 
         for component in &self.current_pane_components {
-            unsafe { self.view.addSubview_(component.view) }
+            let view = component.borrow().view;
+            unsafe { self.view.addSubview_(view) }
         }
     }
 }
@@ -61,6 +67,7 @@ impl PanesComponent {
 pub struct PaneComponent {
     pub view: id, // NSView
     pane: Box<Pane>,
+    item_component: RefCell<Option<ItemComponent>>,
 }
 
 impl PaneComponent {
@@ -68,15 +75,32 @@ impl PaneComponent {
         PaneComponent {
             view: unsafe { NSView::alloc(nil).init() },
             pane: pane,
+            item_component: RefCell::new(None),
         }
     }
 
-    pub fn render(&self, pane: Box<Pane>) {
+    pub fn render(&mut self, pane: Box<Pane>) {
         debug!("PaneComponent#render");
         debug_assert_eq!(self.pane, pane);
         util::resize_to_superview(self.view);
 
         self.render_background();
+
+        if let Some(item) = pane.active_item {
+            self.render_item(item);
+        }
+    }
+
+    fn render_item(&mut self, item: Item) {
+        if self.item_component.borrow().is_none() {
+            let component = ItemComponent::new();
+            unsafe { self.view.addSubview_(component.view) };
+            *self.item_component.borrow_mut() = Some(component);
+        }
+
+        let mut borrowed = self.item_component.borrow_mut();
+        let ref mut item_component = borrowed.as_mut().unwrap();
+        item_component.render(item);
     }
 
     fn render_background(&self) {

@@ -7,18 +7,25 @@ use buffer::{Buffer, File};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Pane {
-    items: Vec<Item>,
+    // Tabs inside a pane.
+    pub items: Vec<Item>,
+    pub active_item: Option<Item>,
 }
 
 impl Pane {
     pub fn new() -> Pane {
         Pane {
             items: vec![],
+            active_item: None,
         }
     }
 
     pub fn add_item(&mut self, item: Item) {
-        self.items.push(item)
+        self.items.push(item.clone());
+
+        if self.active_item == None {
+            self.active_item = Some(item);
+        }
     }
 }
 
@@ -26,7 +33,7 @@ impl Pane {
 pub struct Item {
     // As an optimization `Buffer`'s are managed separately and are
     // internally mutable.
-    buffer: Arc<Buffer>,
+    pub buffer: Arc<Buffer>,
 }
 
 impl PartialEq for Item {

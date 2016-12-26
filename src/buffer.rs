@@ -46,6 +46,12 @@ pub struct Line {
     chars: Vec<char>,
 }
 
+impl Line {
+    fn to_string(&self) -> String {
+        self.chars.clone().into_iter().collect()
+    }
+}
+
 #[derive(Debug)]
 pub enum BufferSource {
     File(File),
@@ -74,5 +80,13 @@ impl Buffer {
             source: BufferSource::Unknown,
             lines: vec![],
         }
+    }
+
+    pub fn to_string(&self) -> String {
+        self.lines
+            .iter()
+            .map(|line| line.to_string())
+            .collect::<Vec<_>>()
+            .join("\n")
     }
 }
