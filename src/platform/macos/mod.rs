@@ -141,6 +141,17 @@ impl Window {
             self.set_title(name)
         }
 
+        let content_view = self.panes.view;
+        let mut bounds: NSRect = unsafe { self.window.frame() };
+        bounds.origin = NSPoint::new(0., 0.);
+        let contect_rect: NSRect = unsafe { self.window.contentRectForFrameRect_(bounds) };
+        unsafe {
+            msg_send![
+                content_view,
+                setFrame:contect_rect
+            ]
+        };
+
         self.panes.render(panes)
     }
 

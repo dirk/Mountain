@@ -32,8 +32,6 @@ impl PanesComponent {
             self.reset_panes(panes)
         }
 
-        util::resize_to_superview(self.view);
-
         for (i, pane_component) in self.current_pane_components.iter().enumerate() {
             let ref pane = self.current_panes[i];
             pane_component.render(pane.clone());
