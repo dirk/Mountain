@@ -5,7 +5,7 @@ use std::sync::Arc;
 
 use buffer::{Buffer, File};
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Pane {
     items: Vec<Item>,
 }

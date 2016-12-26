@@ -3,11 +3,11 @@
 extern crate cocoa;
 extern crate core_graphics;
 
-use super::super::super::pane::Pane;
-
 use self::cocoa::base::{class, id, nil, YES};
 use self::cocoa::appkit::NSView;
 use self::core_graphics::base::CGFloat;
+
+use super::super::super::pane::Pane;
 
 use super::util;
 
@@ -34,8 +34,9 @@ impl PanesComponent {
 
         util::resize_to_superview(self.view);
 
-        for pane in self.current_pane_components.iter() {
-            pane.render()
+        for (i, pane_component) in self.current_pane_components.iter().enumerate() {
+            let ref pane = self.current_panes[i];
+            pane_component.render(pane.clone());
         }
     }
 
@@ -72,10 +73,15 @@ impl PaneComponent {
         }
     }
 
-    pub fn render(&self) {
+    pub fn render(&self, pane: Box<Pane>) {
         debug!("PaneComponent#render");
+        debug_assert_eq!(self.pane, pane);
         util::resize_to_superview(self.view);
 
+        self.render_background();
+    }
+
+    fn render_background(&self) {
         let layer = unsafe { msg_send![class("CALayer"), layer] };
         let gray_color = unsafe {
             CGColorCreateGenericGray(0.5, 1.)
