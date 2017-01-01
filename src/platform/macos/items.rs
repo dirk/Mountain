@@ -33,12 +33,16 @@ impl ItemComponent {
 
         let buffer_as_string = item.buffer.to_string();
 
-        let string_value = unsafe { NSString::alloc(nil).init_str(&buffer_as_string) };
+        let attributed_string: id = unsafe {
+            let string = NSString::alloc(nil).init_str(&buffer_as_string);
+            let ptr: id = msg_send![class("NSMutableAttributedString"), alloc];
+            msg_send![ptr, initWithString:string]
+        };
 
         unsafe {
             msg_send![
                 self.text_field,
-                setStringValue:string_value
+                setAttributedStringValue:attributed_string
             ]
         };
     }
